@@ -10,4 +10,5 @@ public class PriceComparatorApplication {
 		SpringApplication.run(PriceComparatorApplication.class, args);
 	}
 
+
 }
