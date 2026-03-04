@@ -4,10 +4,15 @@
   "manifest_version": 3,
   "description": "Shows a warning if cheaper prices are found elsewhere.",
   "permissions": ["storage", "tabs"],
-  "host_permissions": ["http://localhost:8080/*"],
+  "host_permissions": ["https://price-comparator-s4qm.onrender.com/*"],
   "action": {
     "default_popup": "popup.html",
     "default_title": "Price Comparator"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   },
   "content_scripts": [
     {
