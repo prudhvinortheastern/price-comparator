@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: price-comparator
+    runtime: java
+    plan: free
+    buildCommand: mvn clean package
+    startCommand: java -jar target/price-comparator-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: JAVA_VERSION
+        value: "17.0.0"
+      - key: spring.datasource.url
+        sync: false
+      - key: spring.datasource.username
+        sync: false
+      - key: spring.datasource.password
+        sync: false
+      - key: spring.jpa.hibernate.ddl-auto
+        value: update
+      - key: spring.jpa.properties.hibernate.dialect
+        value: org.hibernate.dialect.PostgreSQLDialect
