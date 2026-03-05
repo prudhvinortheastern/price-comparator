@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Price Comparator — Mid-Semester Project Submission</title>
+<style>
+  /* ── Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #1a1a2e;
+    background: #fff;
+    padding: 0;
+  }
+
+  /* ── Print ── */
+  @media print {
+    .no-print { display: none !important; }
+    body { font-size: 11px; }
+    .page-break { page-break-before: always; }
+    h1.cover-title { font-size: 28px; }
+    pre, code { font-size: 9.5px; }
+    .section-card { box-shadow: none; border: 1px solid #ddd; }
+  }
+
+  /* ── Cover ── */
+  .cover {
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 60%, #1a1a2e 100%);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 40px;
+  }
+  .cover-badge {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  h1.cover-title {
+    font-size: 40px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+  }
+  .cover-subtitle {
+    font-size: 16px;
+    opacity: 0.75;
+    margin-bottom: 40px;
+  }
+  .cover-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 600px;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .cover-meta-item {
+    background: rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 16px 10px;
+  }
+  .cover-meta-item .label { font-size: 10px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; }
+  .cover-meta-item .value { font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .cover-divider {
+    width: 60px;
+    height: 3px;
+    background: #e94560;
+    border-radius: 2px;
+    margin: 30px auto;
+  }
+  .toc {
+    background: rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 24px 32px;
+    max-width: 500px;
+    width: 100%;
+    text-align: left;
+  }
+  .toc h3 { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.6; margin-bottom: 14px; }
+  .toc ol { padding-left: 20px; }
+  .toc li { margin: 6px 0; font-size: 13px; opacity: 0.9; }
+
+  /* ── Content ── */
+  .content { max-width: 960px; margin: 0 auto; padding: 50px 40px; }
+
+  /* ── Section Cards ── */
+  .section-card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    margin-bottom: 36px;
+    overflow: hidden;
+  }
+  .section-header {
+    background: linear-gradient(90deg, #0f3460 0%, #16213e 100%);
+    color: #fff;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-num {
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px; flex-shrink: 0;
+  }
+  .section-title { font-size: 15px; font-weight: 600; }
+  .section-body { padding: 24px; }
+
+  /* ── Headings ── */
+  h2 { font-size: 20px; color: #0f3460; margin-bottom: 14px; }
+  h3 { font-size: 14px; color: #16213e; margin: 20px 0 8px; border-left: 3px solid #e94560; padding-left: 10px; }
+  h4 { font-size: 13px; color: #333; margin: 14px 0 6px; }
+  p  { margin-bottom: 10px; color: #333; }
+
+  /* ── Code blocks ── */
+  pre {
+    background: #0d1117;
+    color: #c9d1d9;
+    border-radius: 10px;
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 1.6;
+    margin: 12px 0;
+    border: 1px solid #21262d;
+  }
+  code { font-family: 'Consolas', 'Courier New', monospace; }
+  .inline-code {
+    background: #f0f3f8;
+    color: #c0392b;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11.5px;
+  }
+
+  /* ── Tables ── */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 12.5px; }
+  th {
+    background: #0f3460;
+    color: #fff;
+    padding: 9px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11.5px;
+  }
+  td { padding: 8px 14px; border-bottom: 1px solid #eef0f4; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #f8f9fc; }
+
+  /* ── Status badges ── */
+  .badge {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-done    { background: #d4edda; color: #155724; }
+  .badge-wip     { background: #fff3cd; color: #856404; }
+  .badge-planned { background: #e2e3f0; color: #383d6f; }
+
+  /* ── Test results ── */
+  .test-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin: 14px 0;
+  }
+  .test-card {
+    border: 1px solid #e0e4ef;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .test-card-header {
+    background: #f0f4ff;
+    padding: 10px 14px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #0f3460;
+    border-bottom: 1px solid #e0e4ef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .test-count {
+    background: #0f3460;
+    color: #fff;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 11px;
+  }
+  .test-list { padding: 10px 14px; }
+  .test-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 5px 0;
+    font-size: 11.5px;
+    color: #333;
+  }
+  .test-pass { color: #28a745; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── Architecture diagram ── */
+  .arch-box {
+    background: #f8f9ff;
+    border: 1px solid #e0e4ef;
+    border-radius: 10px;
+    padding: 20px;
+    font-family: 'Consolas', monospace;
+    font-size: 11.5px;
+    line-height: 1.8;
+    color: #1a1a2e;
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* ── Gantt ── */
+  .gantt { width: 100%; border-collapse: collapse; margin: 14px 0; }
+  .gantt th { background: #0f3460; color: #fff; padding: 8px 12px; font-size: 11.5px; }
+  .gantt td { padding: 7px 12px; border-bottom: 1px solid #eef0f4; font-size: 12px; vertical-align: middle; }
+  .gantt tr:nth-child(even) td { background: #f8f9fc; }
+  .bar-done    { background: #28a745; border-radius: 4px; height: 14px; display: inline-block; min-width: 10px; }
+  .bar-wip     { background: #ffc107; border-radius: 4px; height: 14px; display: inline-block; min-width: 10px; }
+  .bar-planned { background: #6c757d; border-radius: 4px; height: 14px; display: inline-block; min-width: 10px; opacity: 0.5; }
+
+  /* ── Summary stats ── */
+  .stat-row { display: flex; gap: 16px; margin: 16px 0; flex-wrap: wrap; }
+  .stat-box {
+    flex: 1; min-width: 100px;
+    background: linear-gradient(135deg, #0f3460, #16213e);
+    color: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-num { font-size: 28px; font-weight: 700; color: #e94560; }
+  .stat-label { font-size: 11px; opacity: 0.75; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── Print button ── */
+  .print-btn {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: #e94560;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(233,69,96,0.4);
+    z-index: 9999;
+    transition: transform 0.15s;
+  }
+  .print-btn:hover { transform: translateY(-2px); }
+
+  /* ── Pattern callout ── */
+  .pattern-box {
+    background: linear-gradient(135deg, #f0f4ff, #e8f0fe);
+    border-left: 4px solid #0f3460;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin: 14px 0;
+  }
+  .pattern-box strong { color: #0f3460; }
+
+  /* ── File label ── */
+  .file-label {
+    display: inline-block;
+    background: #21262d;
+    color: #8b949e;
+    font-family: monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 6px 6px 0 0;
+    margin-bottom: -1px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     COVER PAGE
+══════════════════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-badge">Mid-Semester Project — CS Course</div>
+  <h1 class="cover-title">Price Comparator</h1>
+  <p class="cover-subtitle">A browser-integrated price comparison tool for online shoppers</p>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <div class="cover-meta-item">
+      <div class="label">Submitted</div>
+      <div class="value">March 6, 2026</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Status</div>
+      <div class="value">Prototype</div>
+    </div>
+    <div class="cover-meta-item">
+      <div class="label">Tests Passing</div>
+      <div class="value">23 / 23</div>
+    </div>
+  </div>
+  <div class="cover-divider"></div>
+  <div class="toc">
+    <h3>Contents</h3>
+    <ol>
+      <li>Project Overview &amp; Architecture</li>
+      <li>Design Patterns</li>
+      <li>Source Code with JavaDoc</li>
+      <li>JUnit Test Suite (23 Tests)</li>
+      <li>Project Roadmap</li>
+    </ol>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1 — PROJECT OVERVIEW
+══════════════════════════════════════════════ -->
+<div class="section-card page-break">
+  <div class="section-header">
+    <div class="section-num">1</div>
+    <div class="section-title">Project Overview &amp; Architecture</div>
+  </div>
+  <div class="section-body">
+
+    <h3>What is Price Comparator?</h3>
+    <p>
+      Price Comparator is a full-stack application that helps online shoppers instantly discover
+      whether a product they are viewing on Amazon is available for less on competing retailers
+      such as eBay and Walmart. It consists of two components working together: a
+      <strong>Spring Boot backend API</strong> deployed to Render.com, and a
+      <strong>Chrome browser extension</strong> that integrates with that API.
+    </p>
+    <p>
+      The user installs the extension and registers once with a name and e-mail. From that point
+      forward, whenever they reach an Amazon cart or checkout page, the extension automatically
+      queries the backend, and if a cheaper price is found elsewhere, a non-intrusive banner
+      appears on the page with a direct link to the better deal.
+    </p>
+
+    <h3>Intended Audience</h3>
+    <p>
+      The primary audience is everyday online shoppers who regularly purchase products on Amazon
+      but want confidence that they are getting the best available price. Secondary users are
+      deal-hunters and budget-conscious students who want a passive price-watchlist without
+      installing a bloated third-party extension.
+    </p>
+
+    <h3>Technology Stack</h3>
+    <table>
+      <tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr>
+      <tr><td>Backend</td><td>Spring Boot 3.5 (Java 17)</td><td>REST API, business logic</td></tr>
+      <tr><td>Database</td><td>PostgreSQL (Neon serverless)</td><td>Users, products, tracked items</td></tr>
+      <tr><td>ORM</td><td>Spring Data JPA / Hibernate</td><td>Repository pattern, schema migration</td></tr>
+      <tr><td>Frontend</td><td>Chrome Extension (Manifest V3)</td><td>UI popup, Amazon page injection</td></tr>
+      <tr><td>Deployment</td><td>Render.com + Docker</td><td>Live at price-comparator-s4qm.onrender.com</td></tr>
+      <tr><td>Testing</td><td>JUnit 5 + Mockito + MockMvc</td><td>Unit &amp; web-layer slice tests</td></tr>
+      <tr><td>Build</td><td>Apache Maven</td><td>Dependency management, test runner</td></tr>
+    </table>
+
+    <h3>System Architecture</h3>
+    <div class="arch-box">┌──────────────────────────────┐        ┌──────────────────────────────────────┐
+│     Chrome Extension          │        │    Spring Boot API (Render.com)       │
+│                               │        │                                       │
+│  popup.html / popup.js        │        │  GET  /                               │
+│  ┌─────────────────────────┐  │        │  POST /api/auth/register              │
+│  │ Register user (name +   │──┼────────▶  POST /api/compare                   │
+│  │ email) → stores userId  │  │        │  POST /api/tracked                    │
+│  │                         │  │        │                                       │
+│  │ Manual compare button   │──┼────────▶                                       │
+│  └─────────────────────────┘  │        └──────────────┬───────────────────────┘
+│                               │                       │
+│  content.js (injected into    │                       │ JPA / Hibernate
+│  *.amazon.com at document_    │                       ▼
+│  idle)                        │        ┌──────────────────────────────────────┐
+│  ┌─────────────────────────┐  │        │   Neon PostgreSQL                    │
+│  │ Detects cart/checkout   │  │        │                                       │
+│  │ → scrapes title + price │──┼────────▶   users          (id, name, email)   │
+│  │ → POST /api/compare     │  │        │   products        (id, url, title)    │
+│  │ → shows banner if       │  │        │   tracked_products (user_id,          │
+│  │   cheaper found         │  │        │                     product_id, price)│
+│  └─────────────────────────┘  │        └──────────────────────────────────────┘
+└──────────────────────────────┘</div>
+
+    <h3>Project Stats</h3>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-num">13</div><div class="stat-label">Java Source Files</div></div>
+      <div class="stat-box"><div class="stat-num">23</div><div class="stat-label">Tests Passing</div></div>
+      <div class="stat-box"><div class="stat-num">4</div><div class="stat-label">REST Endpoints</div></div>
+      <div class="stat-box"><div class="stat-num">3</div><div class="stat-label">DB Tables</div></div>
+      <div class="stat-box"><div class="stat-num">2</div><div class="stat-label">Design Patterns</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2 — DESIGN PATTERNS
+══════════════════════════════════════════════ -->
+<div class="section-card page-break">
+  <div class="section-header">
+    <div class="section-num">2</div>
+    <div class="section-title">Design Patterns</div>
+  </div>
+  <div class="section-body">
+
+    <div class="pattern-box">
+      <strong>Repository Pattern</strong> — Implemented ✅
+      <p style="margin-top:6px;">
+        All database access is mediated through Spring Data JPA repository interfaces
+        (<span class="inline-code">UserRepository</span>,
+        <span class="inline-code">ProductRepository</span>,
+        <span class="inline-code">TrackedProductRepository</span>).
+        Business logic classes never write raw SQL; they call repository methods.
+        This cleanly separates the persistence layer from the service and controller layers,
+        making each independently testable — the <span class="inline-code">AuthServiceTest</span>
+        mocks the repository entirely, so tests run in milliseconds with no database required.
+      </p>
+    </div>
+
+    <div class="pattern-box" style="border-left-color:#e94560; background:linear-gradient(135deg,#fff5f5,#ffe8ea);">
+      <strong>Strategy Pattern</strong> — Planned (Final Version) 📋
+      <p style="margin-top:6px;">
+        The current <span class="inline-code">CompareController</span> returns hardcoded mock
+        offers. In the final version, each retailer will be encapsulated as a
+        <span class="inline-code">PriceFetcher</span> strategy. The controller will iterate over
+        all registered strategies, collect their offers, and return the results. Adding a new
+        retailer (e.g., BestBuy) will require only a new implementing class — the controller
+        itself will not change.
+      </p>
+    </div>
+
+    <h3>Strategy Pattern — Planned Class Diagram</h3>
+    <div class="arch-box">                    «interface»
+                  PriceFetcher
+                 ┌─────────────────────────┐
+                 │ + fetchOffers(          │
+                 │     title: String,      │
+                 │     price: Double       │
+                 │   ): List&lt;Offer&gt;        │
+                 └────────────┬────────────┘
+                              │ implements
+             ┌────────────────┴────────────────┐
+             ▼                                 ▼
+  EbayPriceFetcher                  WalmartPriceFetcher
+  ┌──────────────────────┐          ┌──────────────────────┐
+  │ Calls eBay Browse    │          │ Calls Walmart Open   │
+  │ API with product     │          │ API with product     │
+  │ keywords             │          │ keywords             │
+  └──────────────────────┘          └──────────────────────┘
+             │                                 │
+             └──────────────┬──────────────────┘
+                            ▼
+                   CompareController
+                   ┌────────────────────────────┐
+                   │ List&lt;PriceFetcher&gt; fetchers │  ← injected by Spring
+                   │ POST /api/compare          │
+                   │   → iterate fetchers       │
+                   │   → return cheapest offer  │
+                   └────────────────────────────┘</div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3 — SOURCE CODE
+══════════════════════════════════════════════ -->
+<div class="section-card page-break">
+  <div class="section-header">
+    <div class="section-num">3</div>
+    <div class="section-title">Source Code with JavaDoc</div>
+  </div>
+  <div class="section-body">
+
+    <!-- AuthService -->
+    <h3>AuthService.java — Registration Business Logic</h3>
+    <div class="file-label">src/main/java/com/example/price_comparator/service/AuthService.java</div>
+    <pre>package com.example.price_comparator.service;
+
+import com.example.price_comparator.entity.User;
+import com.example.price_comparator.repository.UserRepository;
+import org.springframework.stereotype.Service;
+
+/**
+ * Business-logic service for user registration in the Price Comparator system.
+ *
+ * &lt;p&gt;This service acts as the single authoritative place for all rules around
+ * creating and retrieving user accounts. Controllers delegate to this class
+ * rather than interacting with the repository directly, keeping the controllers
+ * thin and making the rules easy to unit-test without starting a web server.&lt;/p&gt;
+ *
+ * &lt;p&gt;&lt;b&gt;Idempotency guarantee:&lt;/b&gt; Calling {@link #register(String, String)}
+ * multiple times with the same e-mail address always returns the same
+ * {@link User} record.&lt;/p&gt;
+ */
+@Service
+public class AuthService {
+
+    private final UserRepository users;
+
+    /**
+     * Constructs the service with the required {@link UserRepository} dependency.
+     *
+     * @param users JPA repository used to persist and look up {@link User} records
+     */
+    public AuthService(UserRepository users) {
+        this.users = users;
+    }
+
+    /**
+     * Registers a new user or returns the existing user for the given e-mail.
+     *
+     * &lt;p&gt;Validation rules (throws {@link IllegalArgumentException} on failure):&lt;/p&gt;
+     * &lt;ul&gt;
+     *   &lt;li&gt;{@code name} must not be {@code null} or blank after trimming.&lt;/li&gt;
+     *   &lt;li&gt;{@code email} must contain an {@code @} character.&lt;/li&gt;
+     * &lt;/ul&gt;
+     *
+     * @param name  the user's display name; leading/trailing whitespace is stripped
+     * @param email the user's e-mail address; compared case-insensitively
+     * @return the newly created or pre-existing {@link User}
+     * @throws IllegalArgumentException if name is blank or email is invalid
+     */
+    public User register(String name, String email) {
+        String cleanName  = name  == null ? "" : name.trim();
+        String cleanEmail = email == null ? "" : email.trim().toLowerCase();
+
+        if (cleanName.isBlank()) {
+            throw new IllegalArgumentException("Name is required");
+        }
+        if (cleanEmail.isBlank() || !cleanEmail.contains("@")) {
+            throw new IllegalArgumentException("Valid email is required");
+        }
+
+        return users.findByEmailIgnoreCase(cleanEmail)
+                .orElseGet(() -> {
+                    User u = new User();
+                    u.setName(cleanName);
+                    u.setEmail(cleanEmail);
+                    return users.save(u);
+                });
+    }
+}</pre>
+
+    <!-- AuthController -->
+    <h3>AuthController.java — User Registration Endpoint</h3>
+    <div class="file-label">src/main/java/com/example/price_comparator/controller/AuthController.java</div>
+    <pre>/**
+ * REST controller that handles user authentication / registration.
+ *
+ * &lt;p&gt;The Chrome extension stores a {@code userId} in {@code chrome.storage.local}
+ * after a successful registration. This ID is attached to every subsequent API
+ * call so the backend can associate comparison history and tracked products with
+ * the correct user.&lt;/p&gt;
+ *
+ * &lt;p&gt;Base path: {@code /api/auth}&lt;/p&gt;
+ */
+@RestController
+@RequestMapping("/api/auth")
+public class AuthController {
+
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
+
+    /**
+     * Registers a new user or retrieves an existing one by e-mail address.
+     *
+     * &lt;p&gt;This endpoint is idempotent: calling it multiple times with the same
+     * e-mail always returns the same user record rather than creating duplicates.&lt;/p&gt;
+     *
+     * &lt;p&gt;&lt;b&gt;Request body:&lt;/b&gt; { "name": "Alice", "email": "alice@example.com" }&lt;/p&gt;
+     * &lt;p&gt;&lt;b&gt;Success (200):&lt;/b&gt; { "userId": 1, "name": "Alice", "email": "..." }&lt;/p&gt;
+     * &lt;p&gt;&lt;b&gt;Error (400):&lt;/b&gt; { "error": "Valid email is required" }&lt;/p&gt;
+     *
+     * @param body JSON map containing {@code name} and {@code email} keys
+     * @return 200 OK with user details, or 400 with an error message
+     */
+    @PostMapping("/register")
+    public ResponseEntity&lt;?&gt; register(@RequestBody Map&lt;String, String&gt; body) {
+        try {
+            User user = authService.register(body.get("name"), body.get("email"));
+            return ResponseEntity.ok(Map.of(
+                    "userId", user.getId(),
+                    "name",   user.getName(),
+                    "email",  user.getEmail()
+            ));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+        }
+    }
+}</pre>
+
+    <!-- CompareController -->
+    <h3>CompareController.java — Price Comparison Endpoint</h3>
+    <div class="file-label">src/main/java/com/example/price_comparator/controller/CompareController.java</div>
+    <pre>/**
+ * REST controller that drives the core price-comparison feature.
+ *
+ * &lt;p&gt;The Chrome extension's content script calls this endpoint whenever a user
+ * is on an Amazon cart or checkout page.&lt;/p&gt;
+ *
+ * &lt;p&gt;&lt;b&gt;Design Pattern – Strategy (planned):&lt;/b&gt; In the final version, each
+ * retailer will be a {@code PriceFetcher} strategy. The controller will iterate
+ * over all registered strategies and return the aggregated result.&lt;/p&gt;
+ *
+ * &lt;p&gt;&lt;b&gt;Current prototype:&lt;/b&gt; Returns hardcoded mock offers to validate the
+ * end-to-end pipeline before real API keys are integrated.&lt;/p&gt;
+ */
+@RestController
+@RequestMapping("/api")
+public class CompareController {
+
+    /**
+     * Accepts a product snapshot and returns competing offers.
+     *
+     * &lt;p&gt;Request: { userId, site, url, title, price }&lt;/p&gt;
+     * &lt;p&gt;Response: { cheaperFound, currentSite, currentPrice,
+     *   offers: [ { site, price, url }, ... ] }&lt;/p&gt;
+     *
+     * @param body JSON map with product details from the extension
+     * @return 200 OK with comparison result
+     */
+    @PostMapping("/compare")
+    public ResponseEntity&lt;?&gt; compare(@RequestBody Map&lt;String, Object&gt; body) {
+        // Using HashMap because Map.of() rejects null values (price may be absent)
+        Map&lt;String, Object&gt; result = new HashMap&lt;&gt;();
+        result.put("cheaperFound", true);
+        result.put("currentSite",  body.getOrDefault("site", "unknown"));
+        result.put("currentPrice", body.get("price"));
+        result.put("offers", List.of(
+                Map.of("site", "eBay",    "price", 149.99,
+                       "url", "https://www.ebay.com/sch/i.html?_nkw="
+                               + urlEncode(String.valueOf(body.getOrDefault("title","")))),
+                Map.of("site", "Walmart", "price", 155.49,
+                       "url", "https://www.walmart.com/search?q="
+                               + urlEncode(String.valueOf(body.getOrDefault("title",""))))
+        ));
+        return ResponseEntity.ok(result);
+    }
+
+    /**
+     * URL-encodes a product title for use as a search query parameter.
+     * Replaces spaces with {@code +}.
+     *
+     * @param s the raw product title; null treated as empty
+     * @return space-to-+ encoded string
+     */
+    private String urlEncode(String s) {
+        return s == null ? "" : s.replace(" ", "+");
+    }
+}</pre>
+
+    <!-- TrackedProductController -->
+    <h3>TrackedProductController.java — Product Tracking</h3>
+    <div class="file-label">src/main/java/com/example/price_comparator/controller/TrackedProductController.java</div>
+    <pre>/**
+ * REST controller for persisting a user's tracked products.
+ *
+ * &lt;p&gt;Uses an &lt;em&gt;upsert&lt;/em&gt; pattern for products: if a product with the same
+ * URL already exists in the database it is reused; otherwise a new record is
+ * created. This prevents duplicates across multiple users who view the same listing.&lt;/p&gt;
+ *
+ * &lt;p&gt;Base path: {@code /api/tracked}&lt;/p&gt;
+ */
+@RestController
+@RequestMapping("/api/tracked")
+public class TrackedProductController {
+
+    /**
+     * Records that a user has seen a product.
+     *
+     * &lt;p&gt;Steps: (1) Validate userId exists. (2) Upsert product by URL.
+     * (3) Save TrackedProduct join record with lastSeenPrice.&lt;/p&gt;
+     *
+     * &lt;p&gt;Request: { userId, url, title, site, price }&lt;/p&gt;
+     * &lt;p&gt;Response (200): { trackedId, product }&lt;/p&gt;
+     *
+     * @param body JSON map with user and product details
+     * @return 200 OK with tracked record ID and product title
+     */
+    @PostMapping
+    public ResponseEntity&lt;?&gt; track(@RequestBody Map&lt;String, Object&gt; body) { ... }
+}</pre>
+
+    <!-- Entities -->
+    <h3>Entity Classes</h3>
+    <table>
+      <tr><th>Class</th><th>DB Table</th><th>Key Fields</th><th>Constraints</th></tr>
+      <tr>
+        <td><span class="inline-code">User</span></td>
+        <td><span class="inline-code">users</span></td>
+        <td>id, name, email, createdAt</td>
+        <td>email UNIQUE, name NOT NULL</td>
+      </tr>
+      <tr>
+        <td><span class="inline-code">Product</span></td>
+        <td><span class="inline-code">products</span></td>
+        <td>id, url, title, site, createdAt</td>
+        <td>url UNIQUE (1024 chars)</td>
+      </tr>
+      <tr>
+        <td><span class="inline-code">TrackedProduct</span></td>
+        <td><span class="inline-code">tracked_products</span></td>
+        <td>id, user_id (FK), product_id (FK), lastSeenPrice, createdAt</td>
+        <td>UNIQUE (user_id, product_id)</td>
+      </tr>
+    </table>
+
+    <!-- Repositories -->
+    <h3>Repository Interfaces (Repository Pattern)</h3>
+    <pre>/** Finds a user by email, ignoring case. Used to enforce idempotent registration. */
+public interface UserRepository extends JpaRepository&lt;User, Long&gt; {
+    Optional&lt;User&gt; findByEmailIgnoreCase(String email);
+}
+
+/** Finds a product by its exact URL. Used for the upsert logic in TrackedProductController. */
+public interface ProductRepository extends JpaRepository&lt;Product, Long&gt; {
+    Optional&lt;Product&gt; findByUrl(String url);
+}
+
+/** Inherits full CRUD. Future: add findByUser(), findByUserAndProduct() methods. */
+public interface TrackedProductRepository extends JpaRepository&lt;TrackedProduct, Long&gt; { }</pre>
+
+    <!-- CORS Config -->
+    <h3>CorsConfig.java — Cross-Origin Configuration</h3>
+    <pre>/**
+ * Opens all /api/** routes to any origin so the Chrome extension
+ * (running under chrome-extension://) can call the backend API.
+ *
+ * NOTE: allowedOrigins("*") should be tightened to the specific
+ * extension origin once the extension ID is stable.
+ */
+@Configuration
+public class CorsConfig {
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**")
+                        .allowedOrigins("*")
+                        .allowedMethods("GET","POST","PUT","DELETE","OPTIONS")
+                        .allowedHeaders("*");
+            }
+        };
+    }
+}</pre>
+
+    <!-- Chrome Extension -->
+    <h3>Chrome Extension — content.js (Injected into Amazon)</h3>
+    <div class="file-label">price-comparator-extension/content.js</div>
+    <pre>const API_BASE = "http://localhost:8080"; // TODO: update to live Render URL
+
+/** Returns true only on Amazon cart or checkout pages. */
+function isAmazonCartOrCheckout() {
+    const u = location.href;
+    return u.includes("/gp/cart") || u.includes("/cart") || u.includes("/checkout");
+}
+
+/** Scrapes the product title from the Amazon DOM. */
+function getTitleGuess() {
+    return document.querySelector("#productTitle")?.textContent?.trim()
+        || document.querySelector("span.sc-product-title")?.textContent?.trim()
+        || document.title;
+}
+
+/** Scrapes and parses the product price from the Amazon DOM. */
+function getPriceGuess() {
+    const txt = document.querySelector(".a-price .a-offscreen")?.textContent?.trim() || "";
+    const m = txt.replace(/,/g, "").match(/(\d+(\.\d+)?)/);
+    return m ? Number(m[1]) : null;
+}
+
+/** Injects a fixed-position banner into the Amazon page. */
+function showBanner(message, linkUrl) { ... }
+
+/** Main flow: load user → scrape → POST /api/compare → show banner. */
+async function runCompare() {
+    const user = await loadUser();
+    if (!user?.userId) return;
+    // POSTs to /api/compare, shows banner if cheaperFound === true
+}
+
+if (isAmazonCartOrCheckout()) {
+    setTimeout(runCompare, 2000); // wait for DOM to settle
+}</pre>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 4 — JUNIT TESTS
+══════════════════════════════════════════════ -->
+<div class="section-card page-break">
+  <div class="section-header">
+    <div class="section-num">4</div>
+    <div class="section-title">JUnit Test Suite — 23 Tests, All Passing</div>
+  </div>
+  <div class="section-body">
+
+    <h3>Test Results Summary</h3>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="test-card-header">AuthServiceTest <span class="test-count">9 tests</span></div>
+        <div class="test-list">
+          <div class="test-item"><span class="test-pass">✔</span> new user is saved and returned</div>
+          <div class="test-item"><span class="test-pass">✔</span> duplicate email returns existing user without saving again</div>
+          <div class="test-item"><span class="test-pass">✔</span> email matching is case-insensitive</div>
+          <div class="test-item"><span class="test-pass">✔</span> name whitespace is trimmed before saving</div>
+          <div class="test-item"><span class="test-pass">✔</span> blank name throws IllegalArgumentException</div>
+          <div class="test-item"><span class="test-pass">✔</span> null name throws IllegalArgumentException</div>
+          <div class="test-item"><span class="test-pass">✔</span> email without @ throws IllegalArgumentException</div>
+          <div class="test-item"><span class="test-pass">✔</span> blank email throws IllegalArgumentException</div>
+          <div class="test-item"><span class="test-pass">✔</span> null email throws IllegalArgumentException</div>
+        </div>
+      </div>
+      <div class="test-card">
+        <div class="test-card-header">AuthControllerTest <span class="test-count">4 tests</span></div>
+        <div class="test-list">
+          <div class="test-item"><span class="test-pass">✔</span> valid body returns 200 and user JSON</div>
+          <div class="test-item"><span class="test-pass">✔</span> invalid input returns 400 with error message</div>
+          <div class="test-item"><span class="test-pass">✔</span> missing @ in email returns 400</div>
+          <div class="test-item"><span class="test-pass">✔</span> duplicate email still returns 200</div>
+        </div>
+      </div>
+      <div class="test-card">
+        <div class="test-card-header">CompareControllerTest <span class="test-count">7 tests</span></div>
+        <div class="test-list">
+          <div class="test-item"><span class="test-pass">✔</span> valid request returns 200 OK</div>
+          <div class="test-item"><span class="test-pass">✔</span> response contains cheaperFound field</div>
+          <div class="test-item"><span class="test-pass">✔</span> echoes currentSite from request</div>
+          <div class="test-item"><span class="test-pass">✔</span> returns at least two offers</div>
+          <div class="test-item"><span class="test-pass">✔</span> offers contain site, price, and url fields</div>
+          <div class="test-item"><span class="test-pass">✔</span> offer URLs encode the product title</div>
+          <div class="test-item"><span class="test-pass">✔</span> missing title does not throw 500</div>
+        </div>
+      </div>
+      <div class="test-card">
+        <div class="test-card-header">HomeControllerTest <span class="test-count">2 tests</span></div>
+        <div class="test-list">
+          <div class="test-item"><span class="test-pass">✔</span> GET / returns 200 OK</div>
+          <div class="test-item"><span class="test-pass">✔</span> GET / returns status message in body</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Maven Test Output</h3>
+    <pre>[INFO] Tests run: 9,  Failures: 0, Errors: 0, Skipped: 0  -- AuthServiceTest
+[INFO] Tests run: 4,  Failures: 0, Errors: 0, Skipped: 0  -- AuthControllerTest
+[INFO] Tests run: 7,  Failures: 0, Errors: 0, Skipped: 0  -- CompareControllerTest
+[INFO] Tests run: 2,  Failures: 0, Errors: 0, Skipped: 0  -- HomeControllerTest
+[INFO] Tests run: 1,  Failures: 0, Errors: 0, Skipped: 0  -- PriceComparatorApplicationTests
+[INFO] ─────────────────────────────────────────────────────────────
+[INFO] Tests run: 23, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS</pre>
+
+    <h3>Testing Approach</h3>
+    <table>
+      <tr><th>Test Class</th><th>Annotation</th><th>Strategy</th></tr>
+      <tr>
+        <td><span class="inline-code">AuthServiceTest</span></td>
+        <td><span class="inline-code">@ExtendWith(MockitoExtension.class)</span></td>
+        <td>Pure unit test — UserRepository replaced with Mockito mock. No Spring context, no database. Runs in ~1 second.</td>
+      </tr>
+      <tr>
+        <td><span class="inline-code">AuthControllerTest</span></td>
+        <td><span class="inline-code">@WebMvcTest(AuthController.class)</span></td>
+        <td>Web-layer slice — only MVC layer loaded. AuthService mocked with @MockitoBean. Tests HTTP routing, JSON serialisation, status codes.</td>
+      </tr>
+      <tr>
+        <td><span class="inline-code">CompareControllerTest</span></td>
+        <td><span class="inline-code">@WebMvcTest(CompareController.class)</span></td>
+        <td>Web-layer slice — no dependencies to mock. Tests full response schema and edge cases (null price).</td>
+      </tr>
+      <tr>
+        <td><span class="inline-code">HomeControllerTest</span></td>
+        <td><span class="inline-code">@WebMvcTest(HomeController.class)</span></td>
+        <td>Web-layer slice — verifies health-check endpoint returns correct status string.</td>
+      </tr>
+    </table>
+
+    <h3>Sample Test Code — AuthServiceTest</h3>
+    <div class="file-label">src/test/java/.../service/AuthServiceTest.java</div>
+    <pre>@ExtendWith(MockitoExtension.class)
+class AuthServiceTest {
+
+    @Mock
+    private UserRepository userRepository;
+    private AuthService authService;
+
+    @BeforeEach
+    void setUp() { authService = new AuthService(userRepository); }
+
+    /** Verifies new user is persisted and returned. */
+    @Test
+    @DisplayName("register: new user is saved and returned")
+    void register_newUser_savesAndReturns() {
+        when(userRepository.findByEmailIgnoreCase("alice@example.com"))
+                .thenReturn(Optional.empty());
+        User saved = new User();
+        saved.setName("Alice");  saved.setEmail("alice@example.com");
+        when(userRepository.save(any(User.class))).thenReturn(saved);
+
+        User result = authService.register("Alice", "alice@example.com");
+
+        assertThat(result.getName()).isEqualTo("Alice");
+        assertThat(result.getEmail()).isEqualTo("alice@example.com");
+        verify(userRepository, times(1)).save(any(User.class));
+    }
+
+    /** Verifies blank name throws IllegalArgumentException. */
+    @Test
+    @DisplayName("register: blank name throws IllegalArgumentException")
+    void register_blankName_throwsException() {
+        assertThatThrownBy(() -> authService.register("  ", "alice@example.com"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Name is required");
+    }
+}</pre>
+
+    <h3>Bug Fixed During Testing</h3>
+    <div class="pattern-box" style="border-left-color:#dc3545; background:#fff5f5;">
+      <strong>NullPointerException in CompareController</strong>
+      <p style="margin-top:6px;">
+        Java's <span class="inline-code">Map.of()</span> throws a
+        <span class="inline-code">NullPointerException</span> when any value is null.
+        The original code passed <span class="inline-code">body.get("price")</span> (which is null
+        when the extension omits the price field) directly into <span class="inline-code">Map.of()</span>.
+        This was discovered by the <span class="inline-code">compare_missingTitle_returnsGracefully</span>
+        test. Fixed by switching to <span class="inline-code">new HashMap&lt;&gt;()</span> which accepts null values.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 5 — PROJECT ROADMAP
+══════════════════════════════════════════════ -->
+<div class="section-card page-break">
+  <div class="section-header">
+    <div class="section-num">5</div>
+    <div class="section-title">Project Roadmap</div>
+  </div>
+  <div class="section-body">
+
+    <h3>Completed ✅</h3>
+    <table>
+      <tr><th>Component</th><th>Description</th><th>Status</th></tr>
+      <tr><td>Spring Boot scaffold</td><td>Maven build, embedded Tomcat, PostgreSQL via Neon</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>GET / health check</td><td>Returns status string; used by Render to verify uptime</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>POST /api/auth/register</td><td>Idempotent user registration by e-mail</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>AuthService validation</td><td>Rejects blank names and invalid e-mail addresses</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>POST /api/compare (MVP)</td><td>Returns mock offers — proves the extension↔API pipeline</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>POST /api/tracked</td><td>Persists user–product tracking records to PostgreSQL</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>JPA entities &amp; repositories</td><td>User, Product, TrackedProduct with proper DB constraints</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>CORS configuration</td><td>Allows the Chrome extension to call all /api/** routes</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>Chrome extension — popup</td><td>User registration UI + manual compare trigger</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>Chrome extension — content.js</td><td>Auto-detects Amazon cart/checkout, fires compare, injects banner</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>Render.com deployment</td><td>Live at https://price-comparator-s4qm.onrender.com</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>Dockerfile</td><td>Multi-stage build for containerised deployment</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>JavaDoc comments</td><td>All 13 classes, all methods and fields documented</td><td><span class="badge badge-done">Done</span></td></tr>
+      <tr><td>JUnit test suite</td><td>23 tests across 4 test classes — all passing</td><td><span class="badge badge-done">Done</span></td></tr>
+    </table>
+
+    <h3>In Progress 🔄</h3>
+    <table>
+      <tr><th>Component</th><th>Description</th><th>Status</th></tr>
+      <tr><td>content.js live URL</td><td>Content script still points to localhost:8080; needs updating to Render URL</td><td><span class="badge badge-wip">In Progress</span></td></tr>
+      <tr><td>Duplicate-tracking guard</td><td>Re-submitting the same product throws a DB constraint violation; needs upsert fix</td><td><span class="badge badge-wip">In Progress</span></td></tr>
+    </table>
+
+    <h3>Planned for Final Version 📋</h3>
+    <table>
+      <tr><th>Component</th><th>Priority</th><th>Description</th></tr>
+      <tr><td>Strategy Pattern refactor</td><td>High</td><td>PriceFetcher interface + EbayPriceFetcher + WalmartPriceFetcher strategies</td></tr>
+      <tr><td>Real eBay price lookup</td><td>High</td><td>EbayPriceFetcher using the eBay Browse API (findItemsByKeywords)</td></tr>
+      <tr><td>Real Walmart price lookup</td><td>High</td><td>WalmartPriceFetcher using the Walmart Open API</td></tr>
+      <tr><td>Price history endpoint</td><td>Medium</td><td>GET /api/tracked/{userId} — returns all tracked products with price history</td></tr>
+      <tr><td>Price-drop alerts</td><td>Medium</td><td>Background job compares live prices vs lastSeenPrice; sends extension notification</td></tr>
+      <tr><td>Extension watchlist UI</td><td>Medium</td><td>Popup page showing all tracked products and current best offers</td></tr>
+      <tr><td>URL normalisation</td><td>Low</td><td>Strip Amazon tracking params before storage for better deduplication</td></tr>
+      <tr><td>Secure credentials</td><td>Low</td><td>Move DB credentials from application.properties to Render secrets dashboard</td></tr>
+      <tr><td>Integration tests</td><td>Low</td><td>@SpringBootTest slice tests for TrackedProductController with H2 in-memory DB</td></tr>
+    </table>
+
+    <h3>Timeline (Gantt)</h3>
+    <table class="gantt">
+      <tr>
+        <th style="width:80px;">Weeks</th>
+        <th>Task</th>
+        <th style="width:120px;">Status</th>
+        <th style="width:120px;">Bar</th>
+      </tr>
+      <tr><td>1 – 2</td><td>Project scaffold, DB schema, auth endpoint</td><td><span class="badge badge-done">Done</span></td><td><span class="bar-done" style="width:80px;"></span></td></tr>
+      <tr><td>3 – 4</td><td>Chrome extension MVP (popup + content script)</td><td><span class="badge badge-done">Done</span></td><td><span class="bar-done" style="width:80px;"></span></td></tr>
+      <tr><td>5</td><td>Deploy to Render, CORS, end-to-end test, JavaDoc, JUnit — <strong>MID-SEMESTER</strong></td><td><span class="badge badge-done">Done</span></td><td><span class="bar-done" style="width:40px;"></span></td></tr>
+      <tr><td>6</td><td>Fix content.js URL, duplicate-track guard</td><td><span class="badge badge-wip">In Progress</span></td><td><span class="bar-wip" style="width:40px;"></span></td></tr>
+      <tr><td>7 – 8</td><td>Strategy Pattern refactor + eBay API integration</td><td><span class="badge badge-planned">Planned</span></td><td><span class="bar-planned" style="width:80px;"></span></td></tr>
+      <tr><td>9</td><td>Walmart API integration</td><td><span class="badge badge-planned">Planned</span></td><td><span class="bar-planned" style="width:40px;"></span></td></tr>
+      <tr><td>10</td><td>Price history endpoint + extension watchlist UI</td><td><span class="badge badge-planned">Planned</span></td><td><span class="bar-planned" style="width:40px;"></span></td></tr>
+      <tr><td>11</td><td>Price-drop alert background job</td><td><span class="badge badge-planned">Planned</span></td><td><span class="bar-planned" style="width:40px;"></span></td></tr>
+      <tr><td>12</td><td>URL normalisation, security hardening</td><td><span class="badge badge-planned">Planned</span></td><td><span class="bar-planned" style="width:40px;"></span></td></tr>
+      <tr><td>13 – 14</td><td>Integration tests, bug fixes, final demo</td><td><span class="badge badge-planned">Planned</span></td><td><span class="bar-planned" style="width:80px;"></span></td></tr>
+    </table>
+
+  </div>
+</div>
+
+</div><!-- end .content -->
+
+<!-- ══════════════════════════════════════════════
+     PRINT BUTTON
+══════════════════════════════════════════════ -->
+<button class="print-btn no-print" onclick="window.print()">
+  ⬇ Save as PDF
+</button>
+
+</body>
+</html>

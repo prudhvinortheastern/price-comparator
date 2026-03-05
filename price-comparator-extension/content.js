@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8080";
+const API_BASE = "https://price-comparator-s4qm.onrender.com";
 
 function isAmazonCartOrCheckout() {
     const u = location.href;
