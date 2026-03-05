@@ -2,7 +2,7 @@
   "name": "Price Comparator",
   "version": "0.1.0",
   "manifest_version": 3,
-  "description": "Shows a warning if cheaper prices are found elsewhere.",
+  "description": "Never overpay again. This tool alerts you if the product in your cart is cheaper on another website before you complete checkout",
   "permissions": ["storage", "tabs"],
   "host_permissions": ["https://price-comparator-s4qm.onrender.com/*"],
   "action": {
