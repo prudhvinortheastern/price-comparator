@@ -75,6 +75,31 @@ function showBanner(offers) {
     document.getElementById("pc-close").onclick = () => box.remove();
 }
 
+function getCartItems() {
+    const rows = [...document.querySelectorAll('[data-name="Active Items"] .sc-list-item, .sc-list-item')];
+    return rows.map((row) => {
+      const title = row.querySelector(".sc-product-title, .a-truncate-cut")?.textContent?.trim() || "";
+      const url = row.querySelector("a.a-link-normal")?.href || location.href;
+      const priceText = row.querySelector(".sc-product-price, .a-price .a-offscreen")?.textContent?.trim() || "";
+      const m = priceText.replace(/,/g, "").match(/(\d+(\.\d+)?)/);
+      const price = m ? Number(m[1]) : null;
+      return { title, url, price, site: "amazon" };
+    }).filter(i => i.title);
+  }
+
+  async function trackCartItems(userId) {
+    const items = getCartItems();
+    for (const item of items) {
+      await fetch(`${API_BASE}/api/tracked`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, ...item })
+      });
+    }
+  }
+  
+
+  
 // Main function: call backend and then show banner
 async function runCompare() {
     const user = await loadUser();
